@@ -1,0 +1,38 @@
+<div class="content">
+    <hr/>
+    <div class="justify-content-center">
+        <div class="row mx-auto">
+            <div class="col" style="text-align: center;"><h1>Cuentas</h1></div>
+        </div>
+        <hr/>
+        <div class="row mx-auto">
+            <div class="col">
+                <div *ngFor="let client of clients" style="display: inline;">
+                    <button class="accounts" [routerLink]="['/clients', client.name]">{{ client.name }}</button>
+                </div>
+                <button type="button" class="newaccount" (click)="modal.open(contenido)" style="display: inline;">Nuevo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #contenido let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Crear Cliente</h4>
+        <button class="close" aria-label="close" type="button" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Nombre</div>
+                </div>
+                <input type="text" class="form-control" id="name" [(ngModel)]="client.name" name="name">
+            </div>
+            <br/>
+            <button type="button" class="btn btn-success" (click)="saveClient();modal.close();" routerLink="/clients">Save Client</button>
+        </form>
+    </div>
+</ng-template>

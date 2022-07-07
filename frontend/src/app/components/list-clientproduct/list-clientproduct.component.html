@@ -1,0 +1,201 @@
+<br/>
+<div class="content">
+    <div class="row mx-auto">
+        <div class="col-sm-5" style="text-align: center;"><h1>{{id}}</h1><hr/>
+            <!-- Bill -->
+            <div class="row">
+                <div class="col">Und</div>
+                <div class="col">Name</div>
+                <div class="col">Price</div>
+                <div class="col">IVA</div>
+                <div class="col">Total</div>
+            </div>
+            <hr/>
+            <div *ngFor="let cp of clientproducts">
+                <div class="row">
+                    <div class="col">{{cp.quantity}}</div>
+                    <div class="col">{{cp.product}}</div>
+                    <div class="col">{{cp.price}} €</div>
+                    <div class="col">{{cp.iva}} %</div>
+                    <div class="col">{{(cp.quantity*cp.price).toFixed(2)}} €</div>
+                </div>
+            </div>
+            <hr/>
+            <div class="row mx-auto">
+                <div class="col">Total</div>
+                <div class="col"></div>
+                <div class="col"></div>
+                <div class="col">{{total}} €</div>
+            </div>
+            
+            <hr/>
+            <!-- Pay, Split, Print buttons -->
+            <div class="row mx-auto">
+                <div class="col">
+                    <button type="button" class="btn btn-primary" *ngIf="total>0">Pagar</button>
+                    <button type="button" class="btn btn-primary" *ngIf="total>0 && ProductType!='Separar'" (click)="selectProductType('Separar')">Separar</button>
+                    <button type="button" class="btn btn-danger" *ngIf="ProductType=='Separar'" (click)="selectProductType('Productos')">Atras</button>
+                    <button type="button" class="btn btn-danger" *ngIf="total>0" (click)="printReceipt()"><img src="assets/images/print.png" style="height: 20px"></button>
+                </div>
+                <div class="col" style="justify-content: left;">
+                    <button type="button" class="btn btn-danger" *ngIf="total==0" (click)="deleteClient(id!)">Eliminar Cliente</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-7" *ngIf="ProductType!='Separar'"><h1>{{ProductType}}</h1><hr/>
+            <!-- Display Products as Cards -->
+            <div class="col-8">
+                <div *ngIf="ProductType=='Productos'">
+                    <div *ngFor="let p of ProductTypes" style="display: inline;">
+                        <button class="products" (click)="selectProductType(p)">{{ p }}</button>
+                    </div>
+                </div>
+                <div div class="card-group">
+                    <div *ngFor="let p of products">
+                        <div class="card h-100" *ngIf="ProductType!='Productos'">
+                            <img class="card-img-top" [src]="p.url" alt="Card image cap" height="100px">
+                            <div class="card-body">
+                              <h5 class="card-title">{{p.name}}</h5>
+                              <div class="row">
+                                <div class="col"><p class="card-text">{{p.price}}€</p></div>
+                                <div class="col"><p class="card-text">{{p.iva}}%</p></div>
+                              </div>
+                              <br/>
+                              <div class="d-flex justify-content-center">
+                                <!-- Add, Remove, Modify products -->
+                                <button type="button" class="addProduct" (click)="modal.open(cantidad);updateProductToAdd(p)">+</button>
+                                <button type="button" class="removeProduct" (click)="deleteProductFromClient(p)">-</button>
+                                <button type="button" class="modProduct" (click)="modal.open(modificar); updateProductToAdd(p);"><img src="assets/images/settings.png" style="height: 20px"></button>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <button type="button" class="btn btn-outline-success" (click)="modal.open(contenido);">Crear Producto</button>
+                <button type="button" class="btn btn-outline-danger" *ngIf="ProductType!='Productos'" (click)="selectProductType('Productos')">Atras</button>
+                <button type="button" class="btn btn-outline-danger" *ngIf="ProductType=='Productos'" routerLink='/clients'>Atras</button>
+            </div>
+        </div>
+        <!-- Split Bills -->
+        <div class="col-sm-7" *ngIf="ProductType=='Separar'"><h1>{{ProductType}}</h1><hr/>
+            <div class="row" *ngFor="let cp of clientproductsToSplit">
+                <div class="col-sm-1">
+                    {{cp.product}}
+                </div>
+                <div class="col-sm-1">
+                    <button type="button" class="modProduct">{{cp.quantity}}</button>
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="addProduct">+</button><button type="button" class="removeProduct">-</button>
+                </div>
+                <hr/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create product modal -->
+<ng-template #contenido let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Crear Producto</h4>
+        <button class="close" aria-label="close" type="button" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Nombre</div>
+                </div>
+                <input type="text" class="form-control" id="name" [(ngModel)]="product.name" name="name">
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Precio</div>
+                </div>
+                <input type="number" class="form-control" id="price" [(ngModel)]="product.price" name="price">
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Tipo</div>
+                </div>
+                <input type="text" class="form-control" id="type" [(ngModel)]="product.type" name="type">
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">URL</div>
+                </div>
+                <input type="text" class="form-control" id="url" [(ngModel)]="product.url" name="url">
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">IVA (%)</div>
+                </div>
+                <input type="number" class="form-control" id="iva" [(ngModel)]="product.iva" name="iva">
+            </div>
+            <br/>
+            <button type="button" class="btn btn-success" (click)="saveProduct();modal.close();" routerLink='/clients'>Save Product</button>
+        </form>
+    </div>
+</ng-template>
+
+<!-- Quantity of Products to Add modal -->
+<ng-template #cantidad let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Cantidad a Añadir</h4>
+        <form>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Cantidad</div>
+                </div>
+                <input type="number" class="form-control" [(ngModel)]="quantityToAdd" name="quantityToAdd" value="1">
+            </div>
+        </form>
+        <button type="button" class="btn btn-primary" (click)="addProduct(ProductToAdd);modal.close();">Añadir</button>
+        <button class="btn btn-danger" aria-label="close" type="button" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</ng-template>
+
+<!-- Product Modification modal -->
+<ng-template #modificar let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Crear Producto</h4>
+        <button class="close" aria-label="close" type="button" (click)="modal.dismiss()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Precio</div>
+                </div>
+                <input type="number" class="form-control" id="price" [(ngModel)]="ProductToAdd.price" name="price">
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Tipo</div>
+                </div>
+                <input type="text" class="form-control" id="type" [(ngModel)]="ProductToAdd.type" name="type">
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">URL</div>
+                </div>
+                <input type="text" class="form-control" id="url" [(ngModel)]="ProductToAdd.url" name="url">
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">IVA (%)</div>
+                </div>
+                <input type="number" class="form-control" id="iva" [(ngModel)]="ProductToAdd.iva" name="iva">
+            </div>
+            <br/>
+            <button type="button" class="btn btn-success" (click)="modifyProduct();modifyProduct();modal.close();" routerLink='/clients'>Save Product</button>
+        </form>
+    </div>
+</ng-template>

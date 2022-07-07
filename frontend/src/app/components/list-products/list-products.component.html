@@ -1,0 +1,6 @@
+<h1>List of Products</h1>
+<a routerLink="/products/create">CreateDrink</a>
+<div *ngFor="let product of products">
+    <p>{{product.title}}</p>
+    <div>{{product.description}}</div>
+</div>
