@@ -1,11 +1,13 @@
-<div class="content">
-    <hr/>
+<div class="content" style="  background-image: url('assets/images/Solopadel.jpg');background-size: cover;">
     <div class="justify-content-center">
-        <div class="row mx-auto">
-            <div class="col" style="text-align: center;"><h1>Cuentas</h1></div>
+        <br/>
+        <div class="row mx-auto" style="background: rgba(131, 131, 131, 0.9); border-bottom-style: solid;border-width:1px;">
+            <hr/>
+            <div class="col" style="text-align: center;"><h1 style="color: black;">Cuentas</h1></div>
+            <br/>
         </div>
-        <hr/>
-        <div class="row mx-auto">
+        <br/>
+        <div class="row text-center">
             <div class="col">
                 <div *ngFor="let client of clients" style="display: inline;">
                     <button class="accounts" [routerLink]="['/clients', client.name]">{{ client.name }}</button>
@@ -13,6 +15,7 @@
                 <button type="button" class="newaccount" (click)="modal.open(contenido)" style="display: inline;">Nuevo</button>
             </div>
         </div>
+        <br/>
     </div>
 </div>
 

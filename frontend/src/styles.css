@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+
 .clients {display: inline; border: 2px solid black; border-radius: 5px; border-style: groove; margin-left: 3px; font-size: 150%;}
 .clients:hover {background-color: gray; font-size: 180%; cursor: grab;}
 nav{overflow:hidden;}
@@ -79,9 +80,9 @@ nav{overflow:hidden;}
 
 .accounts {
     display: inline-block; height: 80px; width: 80px;
-    color: #646464;
-    background-color: #ffffff;
-    border-color: #646464;
+    color: rgb(100, 100, 100);
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgb(100, 100, 100);
     border-radius: 10px;
     font-weight: bold;
     letter-spacing: 0.05em;

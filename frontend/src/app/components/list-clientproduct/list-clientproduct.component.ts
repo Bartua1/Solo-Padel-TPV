@@ -8,6 +8,7 @@ import { ProductsService } from 'src/app/services/products.service';
 import { ClientsService } from 'src/app/services/clients.service';
 import { Product } from 'src/app/models/product.ts';
 import * as _ from 'lodash';
+import { NgbTypeaheadWindow } from '@ng-bootstrap/ng-bootstrap/typeahead/typeahead-window';
 
 @Component({
   selector: 'app-list-clientproduct',
@@ -15,13 +16,14 @@ import * as _ from 'lodash';
   styleUrls: ['./list-clientproduct.component.scss']
 })
 export class ListClientproductComponent implements OnInit {
-  quantityToAdd: number = 0;
+  quantityToAdd: number = 1;
   public clientproducts: any = [];
   public clientproductsToSplit: any = [];
   public clientproduct: ClientProduct = new ClientProduct();
   public products: any = [];
   public ps: ClientProduct = new ClientProduct();
   public total: number = 0;
+  public totalToSplit: number = 0;
   public ProductType: string = 'Productos';
   public PT = new Set();
   public ProductTypes: any =[];
@@ -44,9 +46,10 @@ export class ListClientproductComponent implements OnInit {
     });
     this._clientproductsService.getClientProducts(this.id!).subscribe(clientproducts=> {
       this.clientproducts = clientproducts;
-      this.clientproductsToSplit = _.clone(clientproducts);
+      this.clientproductsToSplit = JSON.parse(JSON.stringify(clientproducts));
       for(let cps of this.clientproductsToSplit){
         this.total = this.total + Number((Number(cps.quantity)*Number(cps.price)).toFixed(2));
+        cps.quantity=0;
       }
     });
     this._productsService.getProducts().subscribe(products => {
@@ -81,29 +84,32 @@ export class ListClientproductComponent implements OnInit {
       this.ps.quantity=this.ps.quantity-1;
       this._clientproductsService.saveClientProductsByProduct(this.ps).subscribe(response => {});
     }
+    this.total=this.total-prod.price;
   }
 
   // A function that adds a product to a user
   addProduct(prod: Product){
-    this.ps = this.clientproducts.find((x: any) => x.product == prod.name);
-    if(this.ps==undefined){
-      const a: ClientProduct = new ClientProduct();
-      a.product=prod.name;
-      a.client=this.id!;
-      a.quantity=this.quantityToAdd;
-      a.price=prod.price;
-      a.iva=prod.iva;
-      this._clientproductsService.saveClientProduct(a).subscribe(response => {
-        this._route.navigateByUrl(`clients/${this.id}`);
-      });
-      this.total=this.total+(a.quantity*a.price);
-      window.location.reload();
-    }
-    else{
-      this.ps.quantity=this.ps.quantity+this.quantityToAdd;
-      this._clientproductsService.saveClientProductsByProduct(this.ps).subscribe(response => {});
-      this.total=this.total+this.ps.price;
-    }
+    if(this.quantityToAdd>0){
+      this.ps = this.clientproducts.find((x: any) => x.product == prod.name);
+      if(this.ps==undefined){
+        const a: ClientProduct = new ClientProduct();
+        a.product=prod.name;
+        a.client=this.id!;
+        a.quantity=this.quantityToAdd;
+        a.price=prod.price;
+        a.iva=prod.iva;
+        this._clientproductsService.saveClientProduct(a).subscribe(response => {
+          this._route.navigateByUrl(`clients/${this.id}`);
+        });
+        this.total=this.total+(a.quantity*a.price);
+        window.location.reload();
+      }
+      else{
+        this.ps.quantity=this.ps.quantity+this.quantityToAdd;
+        this._clientproductsService.saveClientProductsByProduct(this.ps).subscribe(response => {});
+        this.total=this.total+this.ps.price;
+      }
+      }
   }
 
   saveClient(){
@@ -148,4 +154,71 @@ export class ListClientproductComponent implements OnInit {
     this._route.navigateByUrl(`printreceipt/${this.id}`);
   }
 
+  splitBills(prod: string, upOrDown: boolean){
+    for(let cp of this.clientproductsToSplit){
+      if(cp.product==prod){
+        let cp1 = this.clientproducts.filter((obj: any)=> {return obj.product == cp.product})[0].quantity;
+        //upOrDown?cp1.quantity>cp.quantity?cp.quantity++:cp:cp.quantity>0?cp.quantity--:cp;
+        if(upOrDown){
+          if(cp1>cp.quantity){
+            cp.quantity++;
+            this.totalToSplit=this.totalToSplit+cp.price;
+          }
+        }
+        else if (upOrDown==false){
+          if(cp.quantity>0){
+            cp.quantity--;
+            this.totalToSplit=Number((this.totalToSplit-cp.price).toFixed(2));
+          }
+        }
+      }
+    }
+  }
+
+  printSplit(){
+    for(let cp of this.clientproducts){
+      let cp1 = this.clientproductsToSplit.filter((obj: any)=> {return obj.product == cp.product})[0];
+      if(cp1.quantity>0){
+        cp.quantity=cp.quantity-cp1.quantity;
+        if(cp.quantity==0){
+          this._clientproductsService.deleteClientProduct(cp).subscribe(response => {});
+        } else{
+          this._clientproductsService.saveClientProductsByProduct(cp).subscribe(response => {});
+        }
+        let cp2 = new ClientProduct();
+        cp2.client='Separar';
+        cp2.iva=cp1.iva;
+        cp2.price=cp1.price;
+        cp2.product=cp1.product;
+        cp2.quantity=cp1.quantity;
+        this._clientproductsService.saveClientProduct(cp2).subscribe(response => {});
+      }
+    }
+    this._route.navigateByUrl(`printreceipt/Separar?client=${this.id}`);
+  }
+
+  paySplit(){
+    for(let cp of this.clientproducts){
+      let cp1 = this.clientproductsToSplit.filter((obj: any)=> {return obj.product == cp.product})[0].quantity;
+      cp.quantity=cp.quantity-cp1;
+      if(cp.quantity==0){
+        this._clientproductsService.deleteClientProduct(cp).subscribe(response => {});
+        window.location.reload();
+      } else{
+        this._clientproductsService.saveClientProductsByProduct(cp).subscribe(response => {});
+      }
+    }
+  }
+
+  pay(){
+    for(let cp of this.clientproducts){
+      this._clientsService.deleteClient(this.id!).subscribe(response => {});;
+      this._clientproductsService.deleteClientProduct(cp).subscribe(response => {});;
+    }
+    setTimeout(() => 
+    {
+      this._route.navigateByUrl('/clients');
+    },
+    50);
+  }
 }

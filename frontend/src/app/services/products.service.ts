@@ -6,8 +6,8 @@ import { Product } from 'src/app/models/product.ts';
   providedIn: 'root'
 })
 export class ProductsService {
-
-  private baseUrl: string = "http://87.220.9.58:3000/api/products";
+  private PoP: string = '192.168.1.30';
+  private baseUrl: string = "http://"+this.PoP+":3000/api/products";
 
   constructor(private _httpClient: HttpClient) { }
 
@@ -20,6 +20,6 @@ export class ProductsService {
   }
 
   modifyProduct(product: Product){
-    return this._httpClient.put(`http://87.220.9.58:3000/api/products/${product._id}`, product);
+    return this._httpClient.put(this.baseUrl+`/${product._id}`, product);
   }
 }

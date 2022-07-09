@@ -21,24 +21,25 @@
                 </div>
             </div>
             <hr/>
-            <div class="row mx-auto">
+            <div class="row">
                 <div class="col">Total</div>
                 <div class="col"></div>
                 <div class="col"></div>
-                <div class="col">{{total}} €</div>
+                <div class="col"></div>
+                <div class="col">{{total.toFixed(2)}} €</div>
             </div>
             
             <hr/>
             <!-- Pay, Split, Print buttons -->
             <div class="row mx-auto">
-                <div class="col">
-                    <button type="button" class="btn btn-primary" *ngIf="total>0">Pagar</button>
+                <div class="col d-flex bd-highlight mb-3">
+                    <button type="button" class="btn btn-primary" *ngIf="total>0" (click)="pay()">Pagar</button>
                     <button type="button" class="btn btn-primary" *ngIf="total>0 && ProductType!='Separar'" (click)="selectProductType('Separar')">Separar</button>
                     <button type="button" class="btn btn-danger" *ngIf="ProductType=='Separar'" (click)="selectProductType('Productos')">Atras</button>
                     <button type="button" class="btn btn-danger" *ngIf="total>0" (click)="printReceipt()"><img src="assets/images/print.png" style="height: 20px"></button>
                 </div>
-                <div class="col" style="justify-content: left;">
-                    <button type="button" class="btn btn-danger" *ngIf="total==0" (click)="deleteClient(id!)">Eliminar Cliente</button>
+                <div class="col d-flex bd-highlight mb-1">
+                    <button type="button" class="btn btn-danger ms-auto p-2 bd-highlight" *ngIf="total==0" (click)="deleteClient(id!)">Eliminar Cliente</button>
                 </div>
             </div>
         </div>
@@ -53,9 +54,13 @@
                 <div div class="card-group">
                     <div *ngFor="let p of products">
                         <div class="card h-100" *ngIf="ProductType!='Productos'">
-                            <img class="card-img-top" [src]="p.url" alt="Card image cap" height="100px">
+                            <img class="card-img-top" [src]="p.url" alt="Card image cap" height="100px" (click)="quantityToAdd=1;updateProductToAdd(p);addProduct(ProductToAdd);">
                             <div class="card-body">
                               <h5 class="card-title">{{p.name}}</h5>
+                              <div class="row" style="border-bottom-style: solid;border-top-style: solid;border-width:1px;">
+                                <div class="col"><p class="card-text">Precio</p></div>
+                                <div class="col"><p class="card-text">IVA</p></div>
+                              </div>
                               <div class="row">
                                 <div class="col"><p class="card-text">{{p.price}}€</p></div>
                                 <div class="col"><p class="card-text">{{p.iva}}%</p></div>
@@ -63,7 +68,16 @@
                               <br/>
                               <div class="d-flex justify-content-center">
                                 <!-- Add, Remove, Modify products -->
-                                <button type="button" class="addProduct" (click)="modal.open(cantidad);updateProductToAdd(p)">+</button>
+                                <!-- <button type="button" class="addProduct" (click)="modal.open(cantidad);updateProductToAdd(p)">+</button> -->
+                                <form>
+                                    <div class="input-group">
+                                        <input type="number" class="modProduct" [(ngModel)]="quantityToAdd" name="quantityToAdd" value="1">
+                                    </div>
+                                </form>
+                                <button type="button" class="addProduct" (click)="updateProductToAdd(p);addProduct(ProductToAdd);">+</button>
+                              </div>
+                              <div class="d-flex justify-content-center">
+                                <!-- Add, Remove, Modify products -->
                                 <button type="button" class="removeProduct" (click)="deleteProductFromClient(p)">-</button>
                                 <button type="button" class="modProduct" (click)="modal.open(modificar); updateProductToAdd(p);"><img src="assets/images/settings.png" style="height: 20px"></button>
                               </div>
@@ -80,16 +94,24 @@
         <!-- Split Bills -->
         <div class="col-sm-7" *ngIf="ProductType=='Separar'"><h1>{{ProductType}}</h1><hr/>
             <div class="row" *ngFor="let cp of clientproductsToSplit">
-                <div class="col-sm-1">
+                <div class="col-sm-4">
                     {{cp.product}}
                 </div>
                 <div class="col-sm-1">
                     <button type="button" class="modProduct">{{cp.quantity}}</button>
                 </div>
                 <div class="col-sm-2">
-                    <button type="button" class="addProduct">+</button><button type="button" class="removeProduct">-</button>
+                    <button type="button" class="addProduct" (click)="splitBills(cp.product,true)">+</button><button type="button" class="removeProduct"  (click)="splitBills(cp.product,false)">-</button>
                 </div>
                 <hr/>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">Total</div>
+                <div class="col-sm-2">{{totalToSplit.toFixed(2)}} €</div>
+            </div>
+            <div class="d-flex text-center">
+                <button type="button" class="btn btn-primary" *ngIf="total>0" (click)="paySplit()">Pagar</button>
+                <button type="button" class="btn btn-danger" *ngIf="total>0" (click)="printSplit()"><img src="assets/images/print.png" style="height: 20px"></button>
             </div>
         </div>
     </div>

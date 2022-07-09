@@ -25,10 +25,11 @@ export class ListClientsComponent implements OnInit {
   }
 
   saveClient(){
-    console.log('printing client', this.client);
-    this._clientService.saveClient(this.client).subscribe( client =>
-      this._route.navigateByUrl('/clients'));
-      window.location.reload();
+    if(this.client.name!=undefined){
+      this._clientService.saveClient(this.client).subscribe( client =>
+        this._route.navigateByUrl('/clients'));
+        window.location.reload();
+    }
   }
 
 }

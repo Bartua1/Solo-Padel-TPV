@@ -12,6 +12,7 @@ export class PrintReceiptComponent implements OnInit {
 
   public clientproducts: any = [];
   public id: string | null;
+  public client: string | null;
   public total: number = 0;
 
   constructor(private route: ActivatedRoute,
@@ -22,6 +23,7 @@ export class PrintReceiptComponent implements OnInit {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.id = params.get('id');
     });
+    this.client = this.route.snapshot.queryParamMap.get('client');
     this._clientproductsService.getClientProducts(this.id!).subscribe(clientproducts=> {
       this.clientproducts = clientproducts;
       for(let cps of this.clientproducts){
@@ -34,6 +36,19 @@ export class PrintReceiptComponent implements OnInit {
     window.print();
   }
   goBack(){
-    this._route.navigateByUrl(`clients/${this.id}`);
+    if(this.id!='Separar'){
+      this._route.navigateByUrl(`clients/${this.id}`);
+    }
+    else{
+      this._route.navigateByUrl(`clients/${this.client}`);
+    }
+  }
+
+  deleteSeparar(){
+    if(this.id=='Separar'){
+      for(let cp of this.clientproducts){
+        this._clientproductsService.deleteClientProduct(cp).subscribe(response => {});
+      }
+    }
   }
 }

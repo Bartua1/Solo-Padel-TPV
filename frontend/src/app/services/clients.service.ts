@@ -7,7 +7,8 @@ import { Client } from 'src/app/models/client.ts';
   providedIn: 'root'
 })
 export class ClientsService {
-  private baseUrl: string = "http://87.220.9.58:3000/api/clients";
+  private PoP: string = '192.168.1.30';
+  private baseUrl: string = "http://"+this.PoP+":3000/api/clients";
 
   constructor(private _httpClient: HttpClient) { }
 
@@ -20,6 +21,6 @@ export class ClientsService {
   }
 
   deleteClient(client: string){
-    return this._httpClient.delete(`http://87.220.9.58:3000/api/clients/${client}`);
+    return this._httpClient.delete(this.baseUrl+`/${client}`);
   }
 } 

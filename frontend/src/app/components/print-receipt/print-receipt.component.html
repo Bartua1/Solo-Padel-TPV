@@ -1,33 +1,35 @@
 
 <div class="ticket">
-    <br/>
-    <img class="ticketimg" src="favicon.ico" alt="Logo">
+    <div class="text-center">
+        <img class="rounded" src="favicon.ico" alt="Logo" style="max-width: 60%;">
+    </div>
         <p class="centered">Calle la red
         <br>Diecisiete, nº53</p>
-    <div class="row row-cols-5" style="border-bottom-style: solid;border-top-style: solid;border-width:1px;">
-        <div class="col-md-1">Ud</div>
-        <div class="col-md-4" style="text-align: left;">Articulo</div>
-        <div class="col-md-1">iva</div>
-        <div class="col-md-1">€</div>
-        <div class="col-md-3">€€</div>
+    <div class="row row-cols-4" style="border-bottom-style: solid;border-top-style: solid;border-width:1px;">
+        <div class="col-1">Ud</div>
+        <div class="col-4" style="text-align: left;">Articulo</div>
+        <div class="col-lg-3">Precio</div>
+        <div class="col-lg-2">Importe</div>
     </div>
     <div *ngFor="let cp of clientproducts" class="row row-cols-4">
-        <div class="col-md-1">{{cp.quantity}}</div>
-        <div class="col-md-4">{{cp.product}}</div>
-        <div class="col-md-1">{{cp.iva}}</div>
-        <div class="col-md-1">{{cp.price}}</div>
-        <div class="col-md-3">{{(cp.quantity*cp.price).toFixed(2)}}</div>
+        <div class="col-1">{{cp.quantity}}</div>
+        <div class="col-4">{{cp.product}}</div>
+        <div class="col-lg-3">{{cp.price}}</div>
+        <div class="col-lg-2">{{(cp.quantity*cp.price).toFixed(2)}}</div>
     </div>
     <div  class="row row-cols-4" style="border-bottom-style: solid;border-top-style: solid;border-width:1px;">
-        <div class="col-md-9">Total</div>
-        <div class="col-md-2">{{total}}</div>
+        <div class="col-1">Total:</div>
+        <div class="col-4"></div>
+        <div class="col-lg-3"></div>
+        <div class="col-lg-2">{{total}}€</div>
     </div>
     <br/>
     <p class="centered">Gracias por su visita!
         <br>solopadelsevilla.es</p>
     
     <div class="row">
-        <div class="col-md-5"><button id="btnPrint" class="hidden-print" (click)="print()">Print</button></div>
-        <div class="col-md-5"><button id="btnPrint" class="hidden-print" (click)="goBack()">Atras</button></div>
+        <div class="col-md-5"><button id="btnPrint" class="hidden-print" (click)="print();deleteSeparar()">Print</button></div>
+        <div class="col-md-5"><button id="btnPrint" class="hidden-print" (click)="deleteSeparar();goBack()">Atras</button></div>
     </div>
+    <p>  </p><p>  </p> 
 </div>
