@@ -30,5 +30,6 @@ app.use("/api/employees", require("./routes/employee.routes"));
 app.use("/api/products", require("./routes/product.routes"));
 app.use("/api/clients", require("./routes/client.routes"));
 app.use("/api/clientproducts", require("./routes/clientproduct.routes"));
+app.use("/api/tickets", require("./routes/ticket.routes"));
 
 module.exports = app;

@@ -3,8 +3,14 @@ const Client = require("../models/client");
 const clientCtrl = {};
 
 clientCtrl.getClients = async (req, res, next) => {
-  const client = await Client.find();
-  res.json(client);
+  try{
+    const client = await Client.find();
+    res.json(client);
+  }
+  catch(error){
+    res.json({status: "Couldnt Retrieve Clients"});
+    console.log(error);
+  }
 };
 
 clientCtrl.createClient = async (req, res, next) => {
@@ -22,21 +28,39 @@ clientCtrl.createClient = async (req, res, next) => {
 };
 
 clientCtrl.getClient = async (req, res, next) => {
-  const { id } = req.params;
-  const client = await Client.findById(id);
-  res.json(client);
+  try{
+    const { id } = req.params;
+    const client = await Client.findById(id);
+    res.json(client);
+  }
+  catch(error){
+    res.json({status: "Couldnt get Client"});
+    console.log(error);
+  }
 };
 
 clientCtrl.editClient = async (req, res, next) => {
-  const { id } = req.params;
-  await Client.findByIdAndUpdate(id, {$set: req.body}, {new: true});
-  res.json({ status: "Client Updated" });
+  try{
+    const { id } = req.params;
+    await Client.findByIdAndUpdate(id, {$set: req.body}, {new: true});
+    res.json({ status: "Client Updated" });
+  }
+  catch(error){
+    res.json({status: "Couldnt edit Client"});
+    console.log(error);
+  }
 };
 
 clientCtrl.deleteClient = async (req, res, next) => {
-  const a = await Client.find({}).where('name').equals(req.params.id);
-  await Client.findByIdAndRemove(a[0]._id);
-  res.json({ status: "Client Deleted" });
+  try{
+    const a = await Client.find({}).where('name').equals(req.params.id);
+    await Client.findByIdAndRemove(a[0]._id);
+    res.json({ status: "Client Deleted" });
+  }
+  catch(error){
+    res.json({status: "Couldnt delete Client"});
+    console.log(error);
+  }
 };
 
 module.exports = clientCtrl;

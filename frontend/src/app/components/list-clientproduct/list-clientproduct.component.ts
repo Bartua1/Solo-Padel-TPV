@@ -6,9 +6,10 @@ import { ClientProduct } from 'src/app/models/clientproduct.ts';
 import { Router } from '@angular/router';
 import { ProductsService } from 'src/app/services/products.service';
 import { ClientsService } from 'src/app/services/clients.service';
+import { TicketsService } from 'src/app/services/tickets.service';
 import { Product } from 'src/app/models/product.ts';
+import { Ticket } from 'src/app/models/ticket.ts';
 import * as _ from 'lodash';
-import { NgbTypeaheadWindow } from '@ng-bootstrap/ng-bootstrap/typeahead/typeahead-window';
 
 @Component({
   selector: 'app-list-clientproduct',
@@ -17,9 +18,11 @@ import { NgbTypeaheadWindow } from '@ng-bootstrap/ng-bootstrap/typeahead/typeahe
 })
 export class ListClientproductComponent implements OnInit {
   quantityToAdd: number = 1;
+  public quantitiesToAdd: any = [];
   public clientproducts: any = [];
   public clientproductsToSplit: any = [];
   public clientproduct: ClientProduct = new ClientProduct();
+  public clients: any = [];
   public products: any = [];
   public ps: ClientProduct = new ClientProduct();
   public total: number = 0;
@@ -38,9 +41,14 @@ export class ListClientproductComponent implements OnInit {
               public modal: NgbModal,
               private _route: Router,
               private _productsService: ProductsService,
-              private _clientsService: ClientsService) { }
+              private _clientsService: ClientsService,
+              private _ticketsService: TicketsService) { }
 
   ngOnInit(): void {
+    this._clientsService.getClients().subscribe(clients=> {
+      this.clients = clients;
+    });
+    this.quantitiesToAdd = [];
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.id = params.get('id');
     });
@@ -58,19 +66,44 @@ export class ListClientproductComponent implements OnInit {
         this.PT.add(p.type);
       }
       this.ProductTypes = Array.from(this.PT);
+      this.products=[];
     });
   }
 
   updateProductToAdd(prod: Product){
     this.ProductToAdd = prod;
+    this.quantitiesToAdd =this.quantitiesToAdd.filter((x: any)=> x.type == prod.type);
   }
 
   selectProductType(type: string){
     this.ProductType=type;
-    this._productsService.getProducts().subscribe(products => {
-      this.products = products;
-      this.products = this.products.filter((x: any)=>x.type==type);
-    });
+    if(this.ProductType!='Separar'){
+      this.quantitiesToAdd.length=0;
+      this._productsService.getProducts().subscribe(products => {
+        this.products = products;
+        this.products = this.products.filter((x: any)=>x.type==type);
+        for(let p of this.products){
+          if(p.type!=type){
+            const obj = {
+              'name': p.name,
+              'quantity': 1,
+              'type': p.type
+            }
+            this.quantitiesToAdd.push(obj);
+          }
+        }
+      });
+    }
+    else {
+      this._clientproductsService.getClientProducts(this.id!).subscribe(clientproducts=> {
+        this.clientproductsToSplit = JSON.parse(JSON.stringify(clientproducts));
+        this.total = 0;
+        for(let cps of this.clientproductsToSplit){
+          this.total = this.total + Number((Number(cps.quantity)*Number(cps.price)).toFixed(2));
+          cps.quantity=0;
+        }
+      });
+    }
   }
 
   // A function that deletes a product
@@ -88,28 +121,29 @@ export class ListClientproductComponent implements OnInit {
   }
 
   // A function that adds a product to a user
-  addProduct(prod: Product){
-    if(this.quantityToAdd>0){
-      this.ps = this.clientproducts.find((x: any) => x.product == prod.name);
-      if(this.ps==undefined){
-        const a: ClientProduct = new ClientProduct();
-        a.product=prod.name;
-        a.client=this.id!;
-        a.quantity=this.quantityToAdd;
-        a.price=prod.price;
-        a.iva=prod.iva;
-        this._clientproductsService.saveClientProduct(a).subscribe(response => {
-          this._route.navigateByUrl(`clients/${this.id}`);
-        });
-        this.total=this.total+(a.quantity*a.price);
-        window.location.reload();
-      }
-      else{
-        this.ps.quantity=this.ps.quantity+this.quantityToAdd;
-        this._clientproductsService.saveClientProductsByProduct(this.ps).subscribe(response => {});
-        this.total=this.total+this.ps.price;
-      }
-      }
+  addProduct(prod: Product, q: number){
+    console.log('index:'+q);
+    const b = Number(this.quantitiesToAdd.filter((x: any) => x.name == prod.name)[0].quantity);
+    this.ps = this.clientproducts.find((x: any) => x.product == prod.name);
+    if(this.ps==undefined && b > 0){
+      const a: ClientProduct = new ClientProduct();
+      a.product=prod.name;
+      a.client=this.id!;
+      a.quantity=b;
+      a.price=prod.price;
+      a.iva=prod.iva;
+      this._clientproductsService.saveClientProduct(a).subscribe(response => {
+        this._route.navigateByUrl(`clients/${this.id}`);
+      });
+      this.total=this.total+(a.quantity*a.price);
+      this.clientproducts.push(a);
+    }
+    else{
+      this.ps.quantity=this.ps.quantity+b;
+      this._clientproductsService.saveClientProductsByProduct(this.ps).subscribe(response => {});
+      this.total=this.total+(this.ps.price*b);
+    }
+    this.ProductType='Productos';
   }
 
   saveClient(){
@@ -198,27 +232,108 @@ export class ListClientproductComponent implements OnInit {
   }
 
   paySplit(){
-    for(let cp of this.clientproducts){
-      let cp1 = this.clientproductsToSplit.filter((obj: any)=> {return obj.product == cp.product})[0].quantity;
-      cp.quantity=cp.quantity-cp1;
-      if(cp.quantity==0){
-        this._clientproductsService.deleteClientProduct(cp).subscribe(response => {});
-        window.location.reload();
-      } else{
-        this._clientproductsService.saveClientProductsByProduct(cp).subscribe(response => {});
+    this._clientproductsService.getClientProducts(this.id!).subscribe(clientproducts=> {
+      this.clientproducts = clientproducts;
+      let finalclientproducts: any = [];
+      // for(let cp of this.clientproducts){
+      //   let cp1 = this.clientproductsToSplit.filter((obj: any)=> {return obj.product == cp.product})[0].quantity;
+      //   cp.quantity=cp.quantity-cp1;
+      //   if(cp.quantity==0){
+      //     var index = this.clientproducts.findIndex((x: any) => x.product == cp.product && x.client == cp.client);
+      //     finalclientproducts = this.clientproducts.splice(index, 1);
+      //     this._clientproductsService.deleteClientProduct(cp).subscribe(response => {});
+      //   } else{
+      //     this._clientproductsService.saveClientProductsByProduct(cp).subscribe(response => {});
+      //   }
+      // }
+      for (let cp1 of this.clientproductsToSplit){
+        let cp = this.clientproducts.filter((obj: any) => obj.product == cp1.product && obj.client == cp1.client)[0];
+        cp.quantity=cp.quantity-cp1.quantity;
+        if(cp.quantity==0){
+          this._clientproductsService.deleteClientProduct(cp).subscribe(response => {});
+          var index = this.clientproducts.findIndex((x: any) => x.product == cp.product && x.client == cp.client);
+          this.clientproducts.splice(index, 1);
+        }
+        else{
+          this._clientproductsService.saveClientProductsByProduct(cp).subscribe(response => {});
+        }
       }
-    }
+      this.total = this.total - this.totalToSplit;
+      this.ProductType='Productos';
+    });
   }
 
   pay(){
-    for(let cp of this.clientproducts){
-      this._clientsService.deleteClient(this.id!).subscribe(response => {});;
-      this._clientproductsService.deleteClientProduct(cp).subscribe(response => {});;
-    }
-    setTimeout(() => 
-    {
-      this._route.navigateByUrl('/clients');
-    },
-    50);
+    this._clientproductsService.getClientProducts(this.id!).subscribe(clientproducts=> {
+      this.clientproducts = clientproducts;
+      let ticket = new Ticket();
+      ticket.client=this.id!; ticket.date = new Date(); ticket.clientproducts = this.clientproducts; ticket.total = this.total;
+      console.log(ticket);
+      this._ticketsService.saveTicket(ticket).subscribe(response => {});
+      if(this.id!=undefined){
+        this._clientsService.deleteClient(this.id!).subscribe(response => {});
+        for(let cp of this.clientproducts){
+          this._clientproductsService.deleteClientProduct(cp).subscribe(response => {});
+        }
+        setTimeout(() => 
+        {
+          this._route.navigate(['/clients']);
+        },
+        500);
+      }
+    });
   }
+
+  changeQuantityToAdd(i: number,b: boolean){
+    if(b){
+      this.quantitiesToAdd[i].quantity=this.quantitiesToAdd[i].quantity+1;
+    }
+    else{
+      this.quantitiesToAdd[i].quantity=this.quantitiesToAdd[i].quantity-1;
+    }
+  }
+
+  addProductToAdd(p: Product){
+//    if(p.type!=this.ProductType){
+//      const obj = {
+//        'name': p.name,
+//        'quantity': 1
+//      }
+//      const index = this.quantitiesToAdd.findIndex((x:any)=>x.name == p.name);
+//      if(index==-1){
+//        this.quantitiesToAdd.push(obj);
+//      }
+//    }
+    const obj = {
+      'name': p.name,
+      'quantity': 1,
+      'type': p.type
+    }
+    const index = this.quantitiesToAdd.findIndex((x:any)=>x.name == p.name);
+    if(index==-1){
+      this.quantitiesToAdd.push(obj);
+    }
+  }
+
+  clearProductsToAdd(){
+    this.quantitiesToAdd = [];
+  }
+
+  changeClient(c: any){
+    this.redirectTo(`clients/${c.name}`);
+  }
+
+  redirectTo(uri:string){
+    this._route.navigateByUrl('/', {skipLocationChange: true}).then(()=>
+    this._route.navigate([uri]));
+ }
+
+  styleAccount(index: number){
+    if(index%2==1){
+      return "accountgray";
+    }else {
+      return "";
+    }
+  }
+
 }

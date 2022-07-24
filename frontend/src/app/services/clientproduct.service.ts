@@ -26,6 +26,10 @@ export class ClientProductService {
     return this._httpClient.delete(this.baseUrl+`/${clientproduct._id}`);
   }
 
+  deleteClientProductsByProduct(client: String, product: String) {
+    return this._httpClient.delete(this.baseUrl+`/${client}/${product}`);
+  }
+
   getClientProductsByProduct(client: String, product: String) {
     return this._httpClient.get(this.baseUrl+`/${client}/${product}`);
   }

@@ -3,16 +3,17 @@
         <br/>
         <div class="row mx-auto" style="background: rgba(131, 131, 131, 0.9); border-bottom-style: solid;border-width:1px;">
             <hr/>
-            <div class="col" style="text-align: center;"><h1 style="color: black;">Cuentas</h1></div>
+            <div class="col" style="text-align: center;"><h1 style="color: white;">Cuentas</h1></div>
             <br/>
         </div>
         <br/>
         <div class="row text-center">
             <div class="col">
                 <div *ngFor="let client of clients" style="display: inline;">
-                    <button class="accounts" [routerLink]="['/clients', client.name]">{{ client.name }}</button>
+                    <button class="accounts full-width" [routerLink]="['/clients', client.name]">{{ client.name }}</button>
                 </div>
-                <button type="button" class="newaccount" (click)="modal.open(contenido)" style="display: inline;">Nuevo</button>
+                <button type="button" class="newaccount full-width" (click)="modal.open(contenido)" style="display: inline;">Nuevo</button>
+                <button type="button" class="newaccount full-width" routerLink="/tickets" style="display: inline;"><img src="assets/images/ticket.png" style="height: 50px"></button>
             </div>
         </div>
         <br/>

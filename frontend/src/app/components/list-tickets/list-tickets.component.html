@@ -1,0 +1,36 @@
+<div class="row">
+    <div div class="card-group">
+        <div *ngFor="let t of tickets; let i = index" style="width:250px;">
+            <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title"><div class="col"><b>{{t.client}}</b></div></h5>
+                  <div class="row">
+                    <div class="col"><p class="card-text" style="color: gray;">{{printDate(t)}}{{datetime}}</p></div>
+                  </div>
+                  <br/>
+                  <!-- Display Ticket -->
+                  <div class="row" style="border-bottom-style: solid; border-width: 1px;">
+                    <div class="col-sm-5">Producto</div>
+                    <div class="col-sm-3">Und</div>
+                    <div class="col-sm-4">Total</div>
+                  </div>
+                  <div class="row" *ngFor="let cp of t.clientproducts">
+                    <div class="col-sm-5">{{cp.product}}</div>
+                    <div class="col-sm-3">{{cp.quantity}}</div>
+                    <div class="col-sm-4">{{cp.quantity*cp.price}}</div>
+                  </div>
+                  <div class="row" style="border-bottom-style: solid; border-top-style: solid; border-width: 1px;">
+                    <div class="col-md-8"></div>
+                    <div class="col-md-4"><b>{{t.total}}€</b></div>
+                  </div>
+                  <br/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-2">
+        <button type="button" class="btn btn-outline-danger" routerLink='/clients'>Atras</button>
+    </div>
+</div>

@@ -1,117 +1,119 @@
 <br/>
 <div class="content">
     <div class="row mx-auto">
-        <div class="col-sm-5" style="text-align: center;"><h1>{{id}}</h1><hr/>
-            <!-- Bill -->
-            <div class="row">
-                <div class="col">Und</div>
-                <div class="col">Name</div>
-                <div class="col">Price</div>
-                <div class="col">IVA</div>
-                <div class="col">Total</div>
-            </div>
-            <hr/>
-            <div *ngFor="let cp of clientproducts">
-                <div class="row">
-                    <div class="col">{{cp.quantity}}</div>
-                    <div class="col">{{cp.product}}</div>
-                    <div class="col">{{cp.price}} €</div>
-                    <div class="col">{{cp.iva}} %</div>
-                    <div class="col">{{(cp.quantity*cp.price).toFixed(2)}} €</div>
-                </div>
-            </div>
-            <hr/>
-            <div class="row">
-                <div class="col">Total</div>
-                <div class="col"></div>
-                <div class="col"></div>
-                <div class="col"></div>
-                <div class="col">{{total.toFixed(2)}} €</div>
-            </div>
-            
-            <hr/>
-            <!-- Pay, Split, Print buttons -->
-            <div class="row mx-auto">
-                <div class="col d-flex bd-highlight mb-3">
-                    <button type="button" class="btn btn-primary" *ngIf="total>0" (click)="pay()">Pagar</button>
-                    <button type="button" class="btn btn-primary" *ngIf="total>0 && ProductType!='Separar'" (click)="selectProductType('Separar')">Separar</button>
-                    <button type="button" class="btn btn-danger" *ngIf="ProductType=='Separar'" (click)="selectProductType('Productos')">Atras</button>
-                    <button type="button" class="btn btn-danger" *ngIf="total>0" (click)="printReceipt()"><img src="assets/images/print.png" style="height: 20px"></button>
-                </div>
-                <div class="col d-flex bd-highlight mb-1">
-                    <button type="button" class="btn btn-danger ms-auto p-2 bd-highlight" *ngIf="total==0" (click)="deleteClient(id!)">Eliminar Cliente</button>
+        <div class="col-sm-3 animated slideInLeft" id="jar-section" style="text-align: center;">
+            <div id="sticky-container">
+                <ng-select placeholder="Cambiar Cliente" [items]="clients" bindLabel="name" (change)="changeClient($event)" style="margin-left: 10px"></ng-select>
+                <div class="container" style="margin-left: 10px; border-style: solid; border-radius: 5px; border-width: 1px;">
+                    <br/>
+                    <img src="assets/images/user.png" style="height: 64px"><h1>{{id}}</h1>
+                    <!-- Bill -->
+                    <div class="row" style="border-bottom-style: solid;border-top-style: solid;border-width:1px; background-color: rgb(194, 194, 194); font-weight: bold;">
+                        <div class="col">Und</div>
+                        <div class="col">Name</div>
+                        <div class="col">Price</div>
+                        <div class="col">IVA</div>
+                        <div class="col">Total</div>
+                    </div>
+                    <div *ngFor="let cp of clientproducts; let i = index">
+                        <div class="row" [ngClass]="styleAccount(i)">
+                            <div class="col">{{cp.quantity}}</div>
+                            <div class="col">{{cp.product}}</div>
+                            <div class="col">{{cp.price}} €</div>
+                            <div class="col">{{cp.iva}} %</div>
+                            <div class="col">{{(cp.quantity*cp.price).toFixed(2)}} €</div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col"></div>
+                        <div class="col"></div>
+                        <div class="col"><b>Total</b></div>
+                        <div class="col"><b>{{total.toFixed(2)}} €</b></div>
+                    </div>
+                    <hr/>
                 </div>
             </div>
         </div>
-        <div class="col-sm-7" *ngIf="ProductType!='Separar'"><h1>{{ProductType}}</h1><hr/>
+        <div class="col" *ngIf="ProductType!='Separar'" style="margin-left: 20px;"><h1>{{ProductType}}</h1><hr/>
             <!-- Display Products as Cards -->
-            <div class="col-8">
+            <div class="col-sm-auto">
                 <div *ngIf="ProductType=='Productos'">
+                    {{clearProductsToAdd()}}
+                    <button type="button" class="newproduct" (click)="modal.open(contenido);">+</button>
                     <div *ngFor="let p of ProductTypes" style="display: inline;">
-                        <button class="products" (click)="selectProductType(p)">{{ p }}</button>
+                        <button class="products full-width" (click)="selectProductType(p); clearProductsToAdd();">{{ p }}</button>
                     </div>
                 </div>
                 <div div class="card-group">
-                    <div *ngFor="let p of products">
+                    <div *ngFor="let p of products; let i = index" style="width:180px;">
+                        {{addProductToAdd(p)}}
                         <div class="card h-100" *ngIf="ProductType!='Productos'">
-                            <img class="card-img-top" [src]="p.url" alt="Card image cap" height="100px" (click)="quantityToAdd=1;updateProductToAdd(p);addProduct(ProductToAdd);">
+                            <img class="card-img-top" [src]="p.url" alt="Card image cap" height="100px" (click)="updateProductToAdd(p);addProduct(ProductToAdd, i);">
                             <div class="card-body">
-                              <h5 class="card-title">{{p.name}}</h5>
-                              <div class="row" style="border-bottom-style: solid;border-top-style: solid;border-width:1px;">
-                                <div class="col"><p class="card-text">Precio</p></div>
-                                <div class="col"><p class="card-text">IVA</p></div>
-                              </div>
+                              <h5 class="card-title"><div class="col">{{p.name}}</div></h5>
                               <div class="row">
-                                <div class="col"><p class="card-text">{{p.price}}€</p></div>
-                                <div class="col"><p class="card-text">{{p.iva}}%</p></div>
+                                <div class="col"><p class="card-text" style="color: gray;">{{p.price}}€</p></div>
                               </div>
                               <br/>
                               <div class="d-flex justify-content-center">
                                 <!-- Add, Remove, Modify products -->
                                 <!-- <button type="button" class="addProduct" (click)="modal.open(cantidad);updateProductToAdd(p)">+</button> -->
-                                <form>
-                                    <div class="input-group">
-                                        <input type="number" class="modProduct" [(ngModel)]="quantityToAdd" name="quantityToAdd" value="1">
-                                    </div>
-                                </form>
-                                <button type="button" class="addProduct" (click)="updateProductToAdd(p);addProduct(ProductToAdd);">+</button>
+                                <button type="button" class="removeProduct more-width" (click)="changeQuantityToAdd(i,false)">-</button>
+                                <button type="button" class="addProduct more-width" (click)="updateProductToAdd(p);changeQuantityToAdd(i,true);">+</button>
                               </div>
                               <div class="d-flex justify-content-center">
                                 <!-- Add, Remove, Modify products -->
-                                <button type="button" class="removeProduct" (click)="deleteProductFromClient(p)">-</button>
-                                <button type="button" class="modProduct" (click)="modal.open(modificar); updateProductToAdd(p);"><img src="assets/images/settings.png" style="height: 20px"></button>
+                                <form>
+                                    <div class="input-group">
+                                        <input type="number" class="modProduct more-width" [(ngModel)]="quantitiesToAdd[i].quantity" name="quantityToAdd" style="text-align: center">
+                                    </div>
+                                </form>
+                                <button type="button" class="modProduct more-width" (click)="modal.open(modificar); updateProductToAdd(p);"><img src="assets/images/settings.png" style="height: 20px"></button>
                               </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <br/>
-                <button type="button" class="btn btn-outline-success" (click)="modal.open(contenido);">Crear Producto</button>
-                <button type="button" class="btn btn-outline-danger" *ngIf="ProductType!='Productos'" (click)="selectProductType('Productos')">Atras</button>
-                <button type="button" class="btn btn-outline-danger" *ngIf="ProductType=='Productos'" routerLink='/clients'>Atras</button>
+            </div>
+            <!-- Pay, Split, Print buttons -->
+            <div class="btn-group">
+                <div *ngIf="total>0 && ProductType!='Separar'"><button type="button" class="button-split" role="button"(click)="selectProductType('Separar')"></button></div>
+                <div *ngIf="total>0 && ProductType!='Separar'"><button type="button" class="button-print" role="button" *ngIf="total>0" (click)="printReceipt()"></button></div>
+                <button type="button" class="button-pay" role="button" *ngIf="total>0" (click)="pay()"></button>
+                <button type="button" class="return" *ngIf="ProductType=='Productos'" routerLink='/clients'></button>
+                <button type="button" role="button" class="button-delete" *ngIf="total==0" (click)="deleteClient(id!)"></button>
+                <button type="button" class="return" *ngIf="ProductType!='Productos'" (click)="selectProductType('Productos');clearProductsToAdd()"></button>             
             </div>
         </div>
         <!-- Split Bills -->
-        <div class="col-sm-7" *ngIf="ProductType=='Separar'"><h1>{{ProductType}}</h1><hr/>
-            <div class="row" *ngFor="let cp of clientproductsToSplit">
-                <div class="col-sm-4">
-                    {{cp.product}}
+        <div class="col" *ngIf="ProductType=='Separar'" style="margin-left: 20px;"><h1>{{ProductType}}</h1><hr/>
+            <div div class="card-group">
+                <div *ngFor="let cp of clientproductsToSplit" style="width: 180px;">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{cp.product}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{cp.price}}</h6>
+                            <p class="card-text">Cantidad: {{cp.quantity}}</p>
+                            <div class="btn-group">
+                                <button type="button" class="btn-add" (click)="splitBills(cp.product,true)">+</button>
+                                <button type="button" class="btn-remove" (click)="splitBills(cp.product,false)" style="margin-left: 15px;">-</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-sm-1">
-                    <button type="button" class="modProduct">{{cp.quantity}}</button>
-                </div>
-                <div class="col-sm-2">
-                    <button type="button" class="addProduct" (click)="splitBills(cp.product,true)">+</button><button type="button" class="removeProduct"  (click)="splitBills(cp.product,false)">-</button>
-                </div>
-                <hr/>
             </div>
+            <hr/>
+            <div class="col-sm-1"><b>Total:</b> {{totalToSplit.toFixed(2)}} €</div>
+            <br/>
             <div class="row">
-                <div class="col-sm-4">Total</div>
-                <div class="col-sm-2">{{totalToSplit.toFixed(2)}} €</div>
-            </div>
-            <div class="d-flex text-center">
-                <button type="button" class="btn btn-primary" *ngIf="total>0" (click)="paySplit()">Pagar</button>
-                <button type="button" class="btn btn-danger" *ngIf="total>0" (click)="printSplit()"><img src="assets/images/print.png" style="height: 20px"></button>
+                <div class="btn-group">
+                    <button type="button"class="button-print" role="button" *ngIf="total>0" (click)="printSplit()"></button>
+                    <button type="button" class="button-pay" role="button" *ngIf="total>0" (click)="paySplit()"></button>
+                    <button type="button" class="return" role="button" (click)="selectProductType('Productos')"></button>
+                </div>
             </div>
         </div>
     </div>
@@ -175,7 +177,7 @@
                 <input type="number" class="form-control" [(ngModel)]="quantityToAdd" name="quantityToAdd" value="1">
             </div>
         </form>
-        <button type="button" class="btn btn-primary" (click)="addProduct(ProductToAdd);modal.close();">Añadir</button>
+        <button type="button" class="btn btn-primary" (click)="addProduct(ProductToAdd, 1);modal.close();">Añadir</button>
         <button class="btn btn-danger" aria-label="close" type="button" (click)="modal.dismiss()">
             <span aria-hidden="true">&times;</span>
         </button>

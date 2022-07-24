@@ -1,11 +1,16 @@
 
 <div class="ticket">
     <div class="text-center">
-        <img class="rounded" src="favicon.ico" alt="Logo" style="max-width: 60%;">
+        <img class="rounded" src="favicon.ico" alt="Logo" style="max-width: 50%;">
     </div>
-        <p class="centered">Calle la red
-        <br>Diecisiete, nº53</p>
-    <div class="row row-cols-4" style="border-bottom-style: solid;border-top-style: solid;border-width:1px;">
+        <div class="centered" style="font-size: 11px;">Calle la red
+            <br/>Diecisiete, nº53
+            <div class="row row-cols-2">
+                <div class="col-8" style="font-size: 10px; color: gray;">Factura Simplificada {{datetime}}</div>
+                <div class="col-3" style="font-size: 10px; color: gray;" *ngIf="id!='Separar'">Cliente: {{id}}</div>
+            </div>
+        </div>
+    <div class="row row-cols-4" style="border-bottom-style: solid;border-top-style: solid;border-width:1px; font-size: 10px;">
         <div class="col-1">Ud</div>
         <div class="col-4" style="text-align: left;">Articulo</div>
         <div class="col-lg-3">Precio</div>
@@ -15,21 +20,25 @@
         <div class="col-1">{{cp.quantity}}</div>
         <div class="col-4">{{cp.product}}</div>
         <div class="col-lg-3">{{cp.price}}</div>
-        <div class="col-lg-2">{{(cp.quantity*cp.price).toFixed(2)}}</div>
+        <div class="col-lg-2">{{(cp.quantity*cp.price).toFixed(3)}}</div>
+    </div>
+    <div  class="row row-cols-4" style="border-top-style: solid;border-width:1px;">
+        <div class="col-7">Importe</div>
+        <div class="col-lg-5">{{importe.toFixed(3)}}</div>
+    </div>
+    <div  class="row row-cols-4" *ngFor="let iv of ivas">
+        <div class="col-7">IVA + {{iv.iva}}</div>
+        <div class="col-lg-5">+{{iv.importe.toFixed(3)}}</div>
     </div>
     <div  class="row row-cols-4" style="border-bottom-style: solid;border-top-style: solid;border-width:1px;">
-        <div class="col-1">Total:</div>
-        <div class="col-4"></div>
-        <div class="col-lg-3"></div>
-        <div class="col-lg-2">{{total}}€</div>
+        <div class="col-7">Total:</div>
+        <div class="col-lg-5">{{total.toFixed(2)}}€</div>
     </div>
     <br/>
     <p class="centered">Gracias por su visita!
-        <br>solopadelsevilla.es</p>
-    
+        <br/>solopadelsevilla.es<br/>.</p>
     <div class="row">
         <div class="col-md-5"><button id="btnPrint" class="hidden-print" (click)="print();deleteSeparar()">Print</button></div>
         <div class="col-md-5"><button id="btnPrint" class="hidden-print" (click)="deleteSeparar();goBack()">Atras</button></div>
     </div>
-    <p>  </p><p>  </p> 
 </div>

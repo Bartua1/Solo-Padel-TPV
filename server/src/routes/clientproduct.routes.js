@@ -15,5 +15,4 @@ router.put("/:id", clientproduct.editClientProducts);
 
 router.delete("/:id", clientproduct.deleteClientProducts);
 
-
 module.exports = router;

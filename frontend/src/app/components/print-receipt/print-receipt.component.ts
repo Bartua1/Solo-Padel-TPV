@@ -14,6 +14,15 @@ export class PrintReceiptComponent implements OnInit {
   public id: string | null;
   public client: string | null;
   public total: number = 0;
+  public importe: number = 0;
+  public ivas: any = [];
+  public currentDate = new Date();
+  public datetime = this.currentDate.getDate() + "/"
+  + (this.currentDate.getMonth()+1)  + "/" 
+  + this.currentDate.getFullYear() + " "
+  + this.currentDate.getHours() + ":"  
+  + this.currentDate.getMinutes() + ":" 
+  + this.currentDate.getSeconds();
 
   constructor(private route: ActivatedRoute,
               private _route: Router,
@@ -27,7 +36,15 @@ export class PrintReceiptComponent implements OnInit {
     this._clientproductsService.getClientProducts(this.id!).subscribe(clientproducts=> {
       this.clientproducts = clientproducts;
       for(let cps of this.clientproducts){
-        this.total = this.total + Number((Number(cps.quantity)*Number(cps.price)).toFixed(2));
+        this.total = this.total + Number((Number(cps.quantity)*Number(cps.price)).toFixed(3));
+        this.importe=this.importe + Number((Number(cps.quantity)*Number(cps.price)*(1-cps.iva*0.01)).toFixed(3));
+        var index = this.ivas.findIndex((x: any)=>x.iva == cps.iva);
+        if (index != -1){
+          this.ivas[index].importe=this.ivas[index].importe+cps.quantity*cps.price*cps.iva*0.01;
+        }
+        else{
+          this.ivas.push({iva: cps.iva, importe: cps.quantity*cps.price*cps.iva*0.01});
+        }
       }
     });
   }
