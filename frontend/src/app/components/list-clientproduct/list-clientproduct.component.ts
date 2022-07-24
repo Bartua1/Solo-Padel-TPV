@@ -147,17 +147,22 @@ export class ListClientproductComponent implements OnInit {
   }
 
   saveClient(){
-    console.log('printing client', this.clientproduct);
+    console.log(this.clientproduct);
     this._clientproductsService.saveClientProduct(this.clientproduct).subscribe( clientproduct =>
       this._route.navigateByUrl('/clientproducts'));
   }
 
   saveProduct() {
-    console.log('printing product', this.product);
+    if(this.product.iva==undefined){
+      this._productsService.getProducts().subscribe(products => {
+        let prods: any = []; prods = products;
+        this.product.iva = prods.filter((x: any)=>x.type==this.product.type)[0].iva
+      });
+    }
     this._productsService.saveProduct(this.product).subscribe( product => {
        if(product){
         this._route.navigateByUrl('/clients');
-       }})
+      }});
   }
 
   modifyProduct(){

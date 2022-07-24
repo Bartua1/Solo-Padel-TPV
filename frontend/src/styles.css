@@ -20,44 +20,6 @@ nav{overflow:hidden;}
   box-shadow: 0px 0px 5px 1px rgb(0, 0, 0);
 }
 
-.addProduct {
-    display: inline-block; height: 40px; width: 40px;
-    color: #2600ff;
-    background-color: #ffffff;
-    border-color: #2600ff;
-    border-radius: 10px;
-    font-weight: bold;
-    letter-spacing: 0.05em;
-}
-
-.addProduct:hover,
-.addProduct:active,
-.addProduct:focus,
-.addProduct.active {
-  background: #2600ff;
-  color: #ffffff;
-  border-color: #2600ff;
-}
-
-.removeProduct {
-    display: inline-block; height: 40px; width: 40px;
-    color: #ff0000;
-    background-color: #ffffff;
-    border-color: #ff0000;
-    border-radius: 10px;
-    font-weight: bold;
-    letter-spacing: 0.05em;
-}
-
-.removeProduct:hover,
-.removeProduct:active,
-.removeProduct:focus,
-.removeProduct.active {
-  background: #ff0000;
-  color: #ffffff;
-  border-color: #ff0000;
-}
-
 .modProduct {
     display: inline-block; height: 40px; width: 40px;
     color: #646464;
@@ -186,6 +148,22 @@ nav{overflow:hidden;}
     }
     button.newproduct {
       height: 150px; width: 150px;  
+      font-size: 20px;
+    }
+    button.button-split {
+      height: 150px; width: 150px;  
+      font-size: 20px;
+    }
+    button.return {
+      height: 150px; width: 150px;  
+      font-size: 20px;
+    }
+    button.button-print {
+      height: 150px; width: 150px;  
+      font-size: 20px;
+    }
+    button.button-pay {
+      height: 150px; width: 300px;  
       font-size: 20px;
     }
 }
@@ -350,11 +328,31 @@ border-color: rgb(0,0,0);
   transition: .4s;
 }
 
-.btn-add:hover{
+.btn-add2{
+  display: inline-block;
+  text-decoration: none;
+  background: #8cd460;
+  color: rgba(255, 255, 255, 0.47);
+  font-weight: bold;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 5px;
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden;
+  box-shadow: 0px 0px 0px 5px #8cd460;
+  border: solid 2px rgba(255, 255, 255, 0.47);
+  transition: .4s;
+}
+
+.btn-add:hover
+.btn-add2:hover{
   border-style: dashed;
 }
 
-.btn-add:active{
+.btn-add:active
+.btn-add2:active{
   background: #225800;
 }
 
@@ -376,10 +374,56 @@ border-color: rgb(0,0,0);
   transition: .4s;
 }
 
-.btn-remove:hover{
+.btn-remove2{
+  display: inline-block;
+  text-decoration: none;
+  background: rgb(233,83,86);
+  color: rgba(255, 255, 255, 0.47);
+  font-weight: bold;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 5px;
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden;
+  box-shadow: 0px 0px 0px 5px rgb(233,83,86);
+  border: solid 2px rgba(255, 255, 255, 0.47);
+  transition: .4s;
+}
+
+.btn-remove:hover
+.btn-remove2:hover{
   border-style: dashed;
 }
 
-.btn-remove:active{
+.btn-remove:active
+.btn-remove2:active{
+  background: rgb(82, 0, 1);
+}
+
+.btn-modify{
+  display: inline-block;
+  text-decoration: none;
+  background: #646464;
+  color: rgba(255, 255, 255, 0.47);
+  font-weight: bold;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 5px;
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden;
+  box-shadow: 0px 0px 0px 5px #646464;
+  border: solid 2px rgba(255, 255, 255, 0.47);
+  transition: .4s;
+}
+
+.btn-modify:hover{
+  border-style: dashed;
+}
+
+.btn-modify:active{
   background: rgb(82, 0, 1);
 }
