@@ -1,0 +1,54 @@
+.client-container{
+    color: rgb(100, 100, 100);
+    border: 3px solid rgb(100, 100, 100);
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+.accounts {
+    display: inline-block; height: 80px; width: 80px;
+    color: rgb(100, 100, 100);
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgb(100, 100, 100);
+    border-radius: 10px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+.accounts:hover,
+.accounts:active,
+.accounts:focus,
+.accounts.active {
+  background-color: #646464;
+  color: #ffffff;
+  border-color: #646464;
+  
+}
+
+.clientcard {
+  height: 130px;
+  display: block;
+}
+
+.bottom {
+  position: absolute;
+  bottom: 0;
+}
+
+.filter {
+  border: 3px solid rgb(100, 100, 100);
+  border-radius: 7px;
+}
+
+@media(max-width: 1280px) {
+    button.accounts {
+      height: 100px; width: 100px;  
+      font-size: 20px;
+    }
+}
+
+@media (orientation : landscape) {    
+  .selector1 { width:960px; }
+}

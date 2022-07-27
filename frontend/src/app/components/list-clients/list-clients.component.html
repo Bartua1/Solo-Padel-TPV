@@ -1,22 +1,38 @@
-<div class="content" style="  background-image: url('assets/images/Solopadel.jpg');background-size: cover;">
-    <div class="justify-content-center">
-        <br/>
-        <div class="row mx-auto" style="background: rgba(131, 131, 131, 0.9); border-bottom-style: solid;border-width:1px;">
+<div class="my-container container-fluid">
+    <br/><br/>
+    <div class="client-container justify-content-center">
+        <div class="row mx-auto">
             <hr/>
-            <div class="col" style="text-align: center;"><h1 style="color: white;">Cuentas</h1></div>
-            <br/>
+            <div class="col" style="text-align: center;"><h1>Cuentas</h1></div>
+            <hr style="color: black;"/><br/>
         </div>
-        <br/>
         <div class="row text-center">
-            <div class="col">
-                <div *ngFor="let client of clients" style="display: inline;">
-                    <button class="accounts full-width" [routerLink]="['/clients', client.name]">{{ client.name }}</button>
+            <br/>
+            <div class="col align-self-center">
+                <input
+                    type="text"
+                    [(ngModel)]="filter"
+                    (input)="filterClients()"
+                    placeholder="Filtrar clientes"
+                    class="filter"
+                />
+            </div>
+            <div class="card-group justify-content-center" style="margin-top: 30px;">
+                <div *ngFor="let client of clientsFilter" style="width:180px;">
+                    <div class="card clientcard" [routerLink]="['/clients', client.name]">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ client.name }}</h5>
+                            <ul class="list-group list-group-flush" style="margin-bottom: 0px;">
+                                <li class="list-group-item bottom"> Total: {{getTotal(client)}} €</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- <button class="accounts full-width" [routerLink]="['/clients', client.name]">{{ client.name }}</button> -->
                 </div>
-                <button type="button" class="newaccount full-width" (click)="modal.open(contenido)" style="display: inline;">Nuevo</button>
-                <button type="button" class="newaccount full-width" routerLink="/tickets" style="display: inline;"><img src="assets/images/ticket.png" style="height: 50px"></button>
+                <button type="button" class="newaccount full-width" (click)="modal.open(contenido)" style="display: inline;"></button>
             </div>
         </div>
-        <br/>
+        <br/><br/><br/>
     </div>
 </div>
 
@@ -33,7 +49,7 @@
                 <div class="input-group-prepend">
                   <div class="input-group-text">Nombre</div>
                 </div>
-                <input type="text" class="form-control" id="name" [(ngModel)]="client.name" name="name">
+                <input type="text" class="form-control" id="name" [(ngModel)]="client.name" name="name" (keydown.enter)="saveClient();modal.close();">
             </div>
             <br/>
             <button type="button" class="btn btn-success" (click)="saveClient();modal.close();" routerLink="/clients">Save Client</button>

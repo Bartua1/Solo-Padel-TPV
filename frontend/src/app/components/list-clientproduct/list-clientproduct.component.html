@@ -1,27 +1,27 @@
 <br/>
 <div class="content">
     <div class="row mx-auto">
-        <div class="col-sm-3 animated slideInLeft" id="jar-section" style="text-align: center;">
-            <div id="sticky-container">
+        <div class="col-lg-auto animated slideInLeft" id="jar-section">
+            <div id="sticky-container justify-content-center">
                 <ng-select placeholder="Cambiar Cliente" [items]="clients" bindLabel="name" (change)="changeClient($event)" style="margin-left: 10px"></ng-select>
                 <div class="container" style="margin-left: 10px; border-style: solid; border-radius: 5px; border-width: 1px;">
                     <br/>
-                    <img src="assets/images/user.png" style="height: 64px"><h1>{{id}}</h1>
+                    <img src="assets/images/user.png" style="height: 64px; display: block; margin-left: auto; margin-right: auto;"><h1 style="text-align: center;">{{id}}</h1>
                     <!-- Bill -->
                     <div class="row" style="border-bottom-style: solid;border-top-style: solid;border-width:1px; background-color: rgb(194, 194, 194); font-weight: bold;">
-                        <div class="col">Und</div>
-                        <div class="col">Name</div>
-                        <div class="col">Price</div>
-                        <div class="col">IVA</div>
-                        <div class="col">Total</div>
+                        <div class="col-md-2">Und</div>
+                        <div class="col-md-3">Nombre</div>
+                        <div class="col-md-2">Precio</div>
+                        <div class="col-md-2">IVA</div>
+                        <div class="col-md-3">Total</div>
                     </div>
                     <div *ngFor="let cp of clientproducts; let i = index">
                         <div class="row" [ngClass]="styleAccount(i)">
-                            <div class="col">{{cp.quantity}}</div>
-                            <div class="col">{{cp.product}}</div>
-                            <div class="col">{{cp.price}} €</div>
-                            <div class="col">{{cp.iva}} %</div>
-                            <div class="col">{{(cp.quantity*cp.price).toFixed(2)}} €</div>
+                            <div class="col-md-2">{{cp.quantity}}</div>
+                            <div class="col-md-3">{{cp.product}}</div>
+                            <div class="col-md-2">{{cp.price.toFixed(2)}}€</div>
+                            <div class="col-md-2">{{cp.iva}}%</div>
+                            <div class="col-md-3">{{(cp.quantity*cp.price).toFixed(2)}} €</div>
                         </div>
                     </div>
                     <hr/>
@@ -30,22 +30,23 @@
                         <div class="col"></div>
                         <div class="col"></div>
                         <div class="col"><b>Total</b></div>
-                        <div class="col"><b>{{total.toFixed(2)}} €</b></div>
+                        <div class="col-md-3"><b>{{total.toFixed(2)}} €</b></div>
                     </div>
                     <hr/>
                 </div>
             </div>
         </div>
         <div class="col" *ngIf="ProductType!='Separar'" style="margin-left: 20px;"><h1>{{ProductType}}</h1><hr/>
-            <!-- Display Products as Cards -->
             <div class="col-sm-auto">
                 <div *ngIf="ProductType=='Productos'">
                     {{clearProductsToAdd()}}
-                    <button type="button" class="newproduct" (click)="modal.open(contenido);">+</button>
+                    <button type="button" class="newproduct full-width" (click)="modal.open(contenido);">+</button>
+                    <!-- Display Products Types -->
                     <div *ngFor="let p of ProductTypes" style="display: inline;">
                         <button class="products full-width" (click)="selectProductType(p); clearProductsToAdd();">{{ p }}</button>
                     </div>
                 </div>
+                <!-- Display Products as Cards -->
                 <div div class="card-group">
                     <div *ngFor="let p of products; let i = index" style="width:180px;">
                         {{addProductToAdd(p)}}
@@ -79,13 +80,13 @@
                 <br/>
             </div>
             <!-- Pay, Split, Print buttons -->
-            <div class="btn-group">
-                <div *ngIf="total>0 && ProductType!='Separar'"><button type="button" class="button-split" role="button"(click)="selectProductType('Separar')"></button></div>
-                <div *ngIf="total>0 && ProductType!='Separar'"><button type="button" class="button-print" role="button" *ngIf="total>0" (click)="printReceipt()"></button></div>
+            <div style="display: inline;">
+                <button type="button" *ngIf="total>0 && ProductType!='Separar'" class="button-split full-width" role="button"(click)="selectProductType('Separar')"></button>
+                <button type="button" *ngIf="total>0 && ProductType!='Separar'" class="button-print full-width" role="button" (click)="printReceipt()"></button>
                 <button type="button" class="button-pay" role="button" *ngIf="total>0" (click)="pay()"></button>
-                <button type="button" class="return" *ngIf="ProductType=='Productos'" routerLink='/clients'></button>
-                <button type="button" role="button" class="button-delete" *ngIf="total==0" (click)="deleteClient(id!)"></button>
-                <button type="button" class="return" *ngIf="ProductType!='Productos'" (click)="selectProductType('Productos');clearProductsToAdd()"></button>             
+                <button type="button" class="return full-width" *ngIf="ProductType=='Productos'" routerLink='/clients'></button>
+                <button type="button" role="button" class="button-delete full-width" *ngIf="total==0" (click)="deleteClient(id!)"></button>
+                <button type="button" class="return full-width" *ngIf="ProductType!='Productos'" (click)="selectProductType('Productos');clearProductsToAdd()"></button>             
             </div>
         </div>
         <!-- Split Bills -->
