@@ -1,2 +1,2 @@
-cd server
-npm run dev
+cd C:\Users\Bartua1\Documents\Proyectos\Solopadel\server
+forever start src/index.js

@@ -1,0 +1,17 @@
+.card-bottom-sm {
+    height: 40px;
+    width: 40px;
+    background-size: 30px;
+    position: absolute;
+    bottom: 0;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+  
+.card-bottom-left-sm:hover,
+.card-bottom-left-sm:active,
+.card-bottom-left-sm:focus,
+.card-bottom-left-sm.active {
+    background-color: rgb(230, 30, 33);
+    border-color: rgb(0,0,0);
+}

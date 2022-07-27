@@ -16,6 +16,8 @@ export class ListTicketsComponent implements OnInit {
 
   public tickets: any = [];
   public datetime: string;
+  public ticket: Ticket;
+  public clientproducts: any = [];
 
   constructor(private route: ActivatedRoute,
               public modal: NgbModal,
@@ -37,5 +39,25 @@ export class ListTicketsComponent implements OnInit {
       + date.getMinutes() + ":" 
       + date.getSeconds();
   }
+  
+  updateTicket(t: Ticket){
+    this.ticket = t;
+    this.clientproducts=t.clientproducts;
+  }
 
+  deleteTicket(t: Ticket){
+    this._ticketsService.deleteTicket(t).subscribe(response=>{});
+  }
+
+  getTickets(){
+    return JSON.parse(JSON.stringify(this.tickets)).reverse();
+  }
+
+  openSm(content: any) {
+    this.modal.open(content, { size: 'sm' });
+  }
+
+  refresh(){
+    window.location.reload();
+  }
 }

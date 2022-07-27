@@ -140,7 +140,7 @@ nav{overflow:hidden;}
       font-size: 20px;
     }
     button.newaccount {
-      height: 100px; width: 100px;  
+      height: 130px; width: 130px;  
       font-size: 20px;
     }
 }
@@ -414,3 +414,4 @@ border-color: rgb(0,0,0);
     background-image: url('assets/images/Solopadel.jpg');
     background-size: cover;
 }
+

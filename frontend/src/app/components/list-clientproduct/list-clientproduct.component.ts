@@ -237,21 +237,13 @@ export class ListClientproductComponent implements OnInit {
   }
 
   paySplit(){
+    let ticket = new Ticket(); ticket.total = this.totalToSplit;
+    ticket.client='Separar '+(this.id!); ticket.date = new Date();
+    let ticketcp: any = [];
     this._clientproductsService.getClientProducts(this.id!).subscribe(clientproducts=> {
       this.clientproducts = clientproducts;
       let finalclientproducts: any = [];
-      // for(let cp of this.clientproducts){
-      //   let cp1 = this.clientproductsToSplit.filter((obj: any)=> {return obj.product == cp.product})[0].quantity;
-      //   cp.quantity=cp.quantity-cp1;
-      //   if(cp.quantity==0){
-      //     var index = this.clientproducts.findIndex((x: any) => x.product == cp.product && x.client == cp.client);
-      //     finalclientproducts = this.clientproducts.splice(index, 1);
-      //     this._clientproductsService.deleteClientProduct(cp).subscribe(response => {});
-      //   } else{
-      //     this._clientproductsService.saveClientProductsByProduct(cp).subscribe(response => {});
-      //   }
-      // }
-      for (let cp1 of this.clientproductsToSplit){
+      for (let cp1 of this.clientproductsToSplit.filter((x: any)=> x.quantity>0)){
         let cp = this.clientproducts.filter((obj: any) => obj.product == cp1.product && obj.client == cp1.client)[0];
         cp.quantity=cp.quantity-cp1.quantity;
         if(cp.quantity==0){
@@ -262,7 +254,10 @@ export class ListClientproductComponent implements OnInit {
         else{
           this._clientproductsService.saveClientProductsByProduct(cp).subscribe(response => {});
         }
+        ticketcp.push(cp1);
       }
+      ticket.clientproducts=ticketcp;
+      this._ticketsService.saveTicket(ticket).subscribe(response => {});
       this.total = this.total - this.totalToSplit;
       this.ProductType='Productos';
     });

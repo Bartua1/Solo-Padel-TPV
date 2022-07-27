@@ -1,2 +1,2 @@
-start execute-frontend.bat
-start execute-backend.bat
+cd frontend
+ng serve --host 192.168.1.30

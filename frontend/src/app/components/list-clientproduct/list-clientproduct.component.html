@@ -97,7 +97,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{cp.product}}</h5>
                             <h6 class="card-subtitle mb-2 text-muted">{{cp.price}}</h6>
-                            <p class="card-text">Cantidad: {{cp.quantity}}</p>
+                            <p class="card-text">Cantidad: <b>{{cp.quantity}}</b></p>
                             <div class="btn-group">
                                 <button type="button" class="btn-add" (click)="splitBills(cp.product,true)">+</button>
                                 <button type="button" class="btn-remove" (click)="splitBills(cp.product,false)" style="margin-left: 15px;">-</button>
@@ -107,7 +107,7 @@
                 </div>
             </div>
             <hr/>
-            <div class="col"><b>Total:</b> {{totalToSplit.toFixed(2)}} €</div>
+            <div class="col" style="font-size: 25px;"><b>Total:</b> {{totalToSplit.toFixed(2)}} €</div>
             <br/>
             <div class="row">
                 <div class="btn-group">

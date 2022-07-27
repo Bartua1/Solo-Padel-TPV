@@ -21,4 +21,8 @@ export class TicketsService {
   modifyTicket(ticket: Ticket){
     return this._httpClient.put(this.baseUrl+`/${ticket._id}`, ticket);
   }
+
+  deleteTicket(ticket: Ticket){
+    return this._httpClient.delete(this.baseUrl+`/${ticket._id}`);
+  }
 }
